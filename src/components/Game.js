@@ -4,7 +4,7 @@ import { Connect } from "./Connect";
 import { Play } from "./Play";
 
 export const Game = () => {
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(true);
 
   const connectWalletAndDeploy = async () => {
     await window.ethereum.send("eth_requestAccounts");
@@ -41,7 +41,7 @@ export const Game = () => {
   };
 
   return connected ? (
-    <Play></Play>
+    <Play newSession={true} rejoin={false}></Play>
   ) : (
     <Connect onConnectClicked={connectWalletAndDeploy}></Connect>
   );
