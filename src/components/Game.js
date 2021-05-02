@@ -35,6 +35,7 @@ export const Game = () => {
   const deployContract = async (formValue) => {
     console.log("deploy");
     const unlocked = await window.ethereum._metamask.isUnlocked();
+    await window.ethereum.send("eth_requestAccounts");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     let abi =
@@ -76,6 +77,8 @@ export const Game = () => {
   const connectToContractSession = async (formValue) => {
     // player1Weapon = formValue.weapon
     console.log("connect");
+    await window.ethereum.send("eth_requestAccounts");
+
     const unlocked = await window.ethereum._metamask.isUnlocked();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
