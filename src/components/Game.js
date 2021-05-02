@@ -1,10 +1,13 @@
 import { ethers, ContractFactory, BigNumber, utils } from "ethers";
 import React, { useState } from "react";
 import { Connect } from "./Connect";
+import { Options } from "./Options";
 import { Play } from "./Play";
 
 export const Game = () => {
   const [connected, setConnected] = useState(true);
+  const [newSession, setNewSession] = useState(undefined);
+  const [rejoin, setRejoin] = useState(undefined);
 
   const connectWalletAndDeploy = async () => {
     await window.ethereum.send("eth_requestAccounts");
@@ -12,7 +15,6 @@ export const Game = () => {
     let address = window.ethereum.selectedAddress;
 
     const unlocked = await window.ethereum._metamask.isUnlocked();
-
 
     let abi =
       '[{"constant":true,"inputs":[{"name":"_c1","type":"uint8"},{"name":"_c2","type":"uint8"}],"name":"win","outputs":[{"name":"w","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"j2Timeout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"stake","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"c2","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"c1Hash","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_c2","type":"uint8"}],"name":"play","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"j2","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastAction","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_c1","type":"uint8"},{"name":"_salt","type":"uint256"}],"name":"solve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"j1","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"j1Timeout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"TIMEOUT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_c1Hash","type":"bytes32"},{"name":"_j2","type":"address"}],"payable":true,"stateMutability":"payable","type":"constructor"}]';
@@ -33,15 +35,33 @@ export const Game = () => {
     const contract = await factory.deploy(hash, otherAddress, { value: wei });
 
     await contract.deployed();
-    console.log(contract)
+    console.log(contract);
     const j1 = await contract.j1();
     const stake = await contract.stake();
     console.log(j1);
     console.log(stake);
   };
 
-  return connected ? (
-    <Play newSession={true} rejoin={false}></Play>
+  const onNewClicked = () => {
+    setNewSession(true);
+  };
+
+  const onJoinClicked = () => {
+    setNewSession(false);
+  };
+
+  const onRejoinClicked = () => {
+    setRejoin(true);
+  };
+
+  return (connected && newSession != undefined) || rejoin != undefined ? (
+    <Play newSession={newSession} rejoin={rejoin}></Play>
+  ) : connected && newSession == undefined && rejoin == undefined ? (
+    <Options
+      onNewClicked={onNewClicked}
+      onJoinClicked={onJoinClicked}
+      onRejoinClicked={onRejoinClicked}
+    ></Options>
   ) : (
     <Connect onConnectClicked={connectWalletAndDeploy}></Connect>
   );
