@@ -68,8 +68,8 @@ export const Play = (props) => {
     //TODO: handle forms for other scenerios too
     const formValue = {
       weapon: event.target[0].value,
-      address: event.target[1].value,
-      stake: event.target[2].value,
+      address: event.target[1]?.value,
+      stake: event.target[2]?.value,
     }
     props.formSubmitted(formValue)
   };
