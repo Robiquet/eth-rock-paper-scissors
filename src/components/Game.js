@@ -35,7 +35,6 @@ export const Game = () => {
   const deployContract = async (formValue) => {
     console.log("deploy");
     const unlocked = await window.ethereum._metamask.isUnlocked();
-    let address = window.ethereum.selectedAddress;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     let abi =
