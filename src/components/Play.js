@@ -28,6 +28,40 @@ const useStyles = makeStyles({
 
 export const Play = (props) => {
   const classes = useStyles();
+  //     enum Move {Null, Rock, Paper, Scissors, Spock, Lizard} // Possible moves. Note that if the parity of the moves is the same the lower one wins, otherwise the higher one.
+  const salt = 65465412;
+  const weapons = [
+    {
+      hash:
+        "0x389f631d616e7c12fb40c6e413bc3a393153a8638922d7698f30e8cdd3e85a7f",
+      value: 0,
+      text: "Rock",
+    },
+    {
+      hash:
+        "0xb1e87fb1565405af97dd4c11307e39fe0e30715988296cf97d5034437f4c4a4c",
+      value: 1,
+      text: "Paper",
+    },
+    {
+      hash:
+        "0xc2e1550c96845c5102419882750ec416af5c1db876759b9f59961d733122a5c3",
+      value: 2,
+      text: "Scissors",
+    },
+    {
+      hash:
+        "0x4941ee0402af2d2db0d805cde613f4d6d689b9fecfaf52d37f439011a5542eed",
+      value: 3,
+      text: "Spock",
+    },
+    {
+      hash:
+        "0x8d879329d9314a21b26537aa4494cf1bfa0005a92e2c0ba72500cce3258e5139",
+      value: 4,
+      text: "Lizard",
+    },
+  ];
 
   const submitted = (event) => {
     event.preventDefault();
@@ -66,11 +100,9 @@ export const Play = (props) => {
                 variant="filled"
                 className={classes.input}
               >
-                <MenuItem value={10}>Rock</MenuItem>
-                <MenuItem value={20}>Paper</MenuItem>
-                <MenuItem value={30}>Scissors</MenuItem>
-                <MenuItem value={40}>Spock</MenuItem>
-                <MenuItem value={50}>Lizard</MenuItem>
+                {weapons.map((w) => (
+                  <MenuItem value={w}>{w.text}</MenuItem>
+                ))}
               </TextField>
               <TextField
                 label={
