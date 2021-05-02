@@ -13,18 +13,21 @@ export const Game = () => {
   let contractAddress;
   let player1Weapon;
 
-  useEffect(async () => {
-    const unlocked = await window.ethereum._metamask.isUnlocked();
-    if (unlocked === true) {
-      setConnected(true);
-    } else {
-      setConnected(false);
+  useEffect(() => {
+    async function checkConnection() {
+      const connected = await window.ethereum.isConnected();
+      if (connected === true) {
+        setConnected(true);
+      } else {
+        setConnected(false);
+      }
     }
+    checkConnection()
   }, []);
 
   const connectWallet = async () => {
     try {
-      await window.ethereum.send("eth_requestAccounts");
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       setConnected(true);
     } catch {
@@ -34,8 +37,7 @@ export const Game = () => {
 
   const deployContract = async (formValue) => {
     console.log("deploy");
-    const unlocked = await window.ethereum._metamask.isUnlocked();
-    await window.ethereum.send("eth_requestAccounts");
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     let abi =
@@ -77,9 +79,8 @@ export const Game = () => {
   const connectToContractSession = async (formValue) => {
     // player1Weapon = formValue.weapon
     console.log("connect");
-    await window.ethereum.send("eth_requestAccounts");
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-    const unlocked = await window.ethereum._metamask.isUnlocked();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     let abi =
@@ -128,7 +129,6 @@ export const Game = () => {
     console.log("timeout");
     const address = contractAddress ?? localStorage.getItem("contractAddress");
 
-    const unlocked = await window.ethereum._metamask.isUnlocked();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     let abi =
