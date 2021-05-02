@@ -1,32 +1,33 @@
 import { ethers, ContractFactory, BigNumber, utils } from "ethers";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Connect } from "./Connect";
 import { Options } from "./Options";
 import { Play } from "./Play";
+import { Session } from "./Session";
 
 export const Game = () => {
   const [connected, setConnected] = useState(false);
   const [newSession, setNewSession] = useState(undefined);
   const [rejoin, setRejoin] = useState(undefined);
+  const [sessionStarted, setSessionStarted] = useState(false);
 
   useEffect(async () => {
     const unlocked = await window.ethereum._metamask.isUnlocked();
-    if(unlocked === true) {
-      setConnected(true)
+    if (unlocked === true) {
+      setConnected(true);
     } else {
-      setConnected(false)
+      setConnected(false);
     }
-  }, [])
+  }, []);
 
   const connectWallet = async () => {
     try {
       await window.ethereum.send("eth_requestAccounts");
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      setConnected(true)
+      setConnected(true);
     } catch {
-      console.error('Error connecting wallet')
+      console.error("Error connecting wallet");
     }
-
   };
 
   const deployContract = async (formValue) => {
@@ -43,9 +44,9 @@ export const Game = () => {
 
     const factory = new ContractFactory(abi, bytecode, signer);
 
-    const hash = formValue.weapon; 
+    const hash = formValue.weapon;
     const otherAddress = formValue.address;
-    const ethNumber = formValue.stake; 
+    const ethNumber = formValue.stake;
     const wei = utils.parseEther(ethNumber);
 
     const contract = await factory.deploy(hash, otherAddress, { value: wei });
@@ -56,7 +57,8 @@ export const Game = () => {
     const stake = await contract.stake();
     console.log(j1);
     console.log(stake);
-  }
+    setSessionStarted(true);
+  };
 
   const onNewClicked = () => {
     setNewSession(true);
@@ -70,8 +72,25 @@ export const Game = () => {
     setRejoin(true);
   };
 
-  return (connected && newSession !== undefined) || rejoin !== undefined ? (
-    <Play newSession={newSession} rejoin={rejoin} formSubmitted={deployContract}></Play>
+  const onTimeoutClicked = () => {
+    console.log('timeout')
+  };
+
+  const onSolveClicked = () => {
+    console.log('solve')
+  };
+
+  return sessionStarted === true ? (
+    <Session
+      onSolveClicked={onSolveClicked}
+      onTimeoutClicked={onTimeoutClicked}
+    ></Session>
+  ) : (connected && newSession !== undefined) || rejoin !== undefined ? (
+    <Play
+      newSession={newSession}
+      rejoin={rejoin}
+      formSubmitted={deployContract}
+    ></Play>
   ) : connected && newSession === undefined && rejoin === undefined ? (
     <Options
       onNewClicked={onNewClicked}
