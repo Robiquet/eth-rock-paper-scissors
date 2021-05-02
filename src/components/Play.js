@@ -66,12 +66,20 @@ export const Play = (props) => {
   const submitted = (event) => {
     event.preventDefault();
     //TODO: handle forms for other scenerios too
-    const formValue = {
-      weapon: event.target[0].value,
-      address: event.target[1]?.value,
-      stake: event.target[2]?.value,
+    let formValue;
+    if (props.rejoin === true) {
+      formValue = {
+        address: event.target[0].value,
+      };
+    } else {
+      formValue = {
+        weapon: event.target[0].value,
+        weaponHash: weapons.find((w) => w.value.toString() === event.target[0].value).hash,
+        address: event.target[1].value,
+        stake: event.target[2].value,
+      };
     }
-    props.formSubmitted(formValue)
+    props.formSubmitted(formValue);
   };
 
   return (
@@ -104,8 +112,10 @@ export const Play = (props) => {
                 variant="filled"
                 className={classes.input}
               >
-                {weapons.map((w,idx) => (
-                  <MenuItem key={idx} value={w.hash}>{w.text}</MenuItem>
+                {weapons.map((w, idx) => (
+                  <MenuItem key={idx} value={w.value}>
+                    {w.text}
+                  </MenuItem>
                 ))}
               </TextField>
               <TextField
