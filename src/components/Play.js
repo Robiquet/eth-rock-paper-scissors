@@ -65,9 +65,13 @@ export const Play = (props) => {
 
   const submitted = (event) => {
     event.preventDefault();
-    console.log(event.target[0].value);
-    console.log(event.target[1].value);
-    console.log(event.target[2].value);
+    //TODO: handle forms for other scenerios too
+    const formValue = {
+      weapon: event.target[0].value,
+      address: event.target[1].value,
+      stake: event.target[2].value,
+    }
+    props.formSubmitted(formValue)
   };
 
   return (
@@ -100,8 +104,8 @@ export const Play = (props) => {
                 variant="filled"
                 className={classes.input}
               >
-                {weapons.map((w) => (
-                  <MenuItem value={w}>{w.text}</MenuItem>
+                {weapons.map((w,idx) => (
+                  <MenuItem key={idx} value={w.hash}>{w.text}</MenuItem>
                 ))}
               </TextField>
               <TextField

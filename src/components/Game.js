@@ -29,7 +29,7 @@ export const Game = () => {
 
   };
 
-  const deployContract = async () => {
+  const deployContract = async (formValue) => {
     const unlocked = await window.ethereum._metamask.isUnlocked();
     let address = window.ethereum.selectedAddress;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -43,11 +43,9 @@ export const Game = () => {
 
     const factory = new ContractFactory(abi, bytecode, signer);
 
-    const hash =
-      "0x6c00000000000000000000000000000000000000000000000000000000000000"; //get from input
-    const otherAddress = "0x7110694Ea37d87eea42B4dF5C881D9106d3A80eb"; //get from input
-
-    const ethNumber = "0.00001"; //get from input
+    const hash = formValue.weapon; 
+    const otherAddress = formValue.address;
+    const ethNumber = formValue.stake; 
     const wei = utils.parseEther(ethNumber);
 
     const contract = await factory.deploy(hash, otherAddress, { value: wei });
@@ -72,9 +70,9 @@ export const Game = () => {
     setRejoin(true);
   };
 
-  return (connected && newSession != undefined) || rejoin != undefined ? (
-    <Play newSession={newSession} rejoin={rejoin}></Play>
-  ) : connected && newSession == undefined && rejoin == undefined ? (
+  return (connected && newSession !== undefined) || rejoin !== undefined ? (
+    <Play newSession={newSession} rejoin={rejoin} formSubmitted={deployContract}></Play>
+  ) : connected && newSession === undefined && rejoin === undefined ? (
     <Options
       onNewClicked={onNewClicked}
       onJoinClicked={onJoinClicked}
