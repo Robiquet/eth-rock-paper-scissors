@@ -25,6 +25,10 @@ export const Game = () => {
       if (connected === true) {
         setConnected(true);
       } else {
+        window.ethereum.on("connect", () => {
+          if (connected === false) setConnected(true);
+        });
+
         setConnected(false);
       }
     }
