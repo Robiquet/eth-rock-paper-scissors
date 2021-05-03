@@ -5,7 +5,7 @@ import { Options } from "./Options";
 import { Play } from "./Play";
 import { Session } from "./Session";
 
-export const Game = () => {
+export const Game = (props) => {
   const [connected, setConnected] = useState(false);
   const [newSession, setNewSession] = useState(undefined);
   const [rejoin, setRejoin] = useState(undefined);
@@ -49,6 +49,7 @@ export const Game = () => {
   };
 
   const deployContract = async (formValue) => {
+    props.loaderChange(true)
     setIsPlayer1(true)
     await window.ethereum.request({ method: "eth_requestAccounts" });
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -72,9 +73,11 @@ export const Game = () => {
     localStorage.setItem("player1Weapon", formValue.weapon);
     localStorage.setItem("contractAddress", contractAddress);
     setSessionStarted(true);
+    props.loaderChange(false)
   };
 
   const connectToContractSession = async (formValue) => {
+    props.loaderChange(true)
     setIsPlayer1(false)
     await window.ethereum.request({ method: "eth_requestAccounts" });
 
@@ -95,12 +98,16 @@ export const Game = () => {
       setContractAddress(formValue.address)
       localStorage.setItem("contractAddress", formValue.address);
       setSessionStarted(true);
+      props.loaderChange(false)
     } catch (e) {
       console.log(e);
+      props.loaderChange(false)
     }
   };
 
   const rejoinSession = async (formValue) => {
+    props.loaderChange(true)
+
     setContractAddress(formValue.address);
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -117,11 +124,13 @@ export const Game = () => {
     } else if (j2 === walletAddress) {
       setIsPlayer1(false)
     }
-    
+    props.loaderChange(false)
     setSessionStarted(true);
   };
 
   const timeoutPlayer = async () => {
+    props.loaderChange(true)
+
     const address = contractAddress ?? localStorage.getItem("contractAddress");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -142,9 +151,11 @@ export const Game = () => {
     await tx.wait();
     console.log(tx);
     restartGame();
+    props.loaderChange(false)
   };
 
   const solve = async () => {
+    props.loaderChange(true)
     const address = contractAddress ?? localStorage.getItem("contractAddress");
     const weapon = localStorage.getItem("player1Weapon");
     const salt = 65465412;
@@ -155,6 +166,7 @@ export const Game = () => {
 
     const tx = await contract.solve(weapon, salt, { gasLimit: 200000 });
     await tx.wait();
+    props.loaderChange(false)
     restartGame();
   };
 
