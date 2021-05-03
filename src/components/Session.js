@@ -1,10 +1,9 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import React from "react";
 
 const useStyles = makeStyles({
   root: {
@@ -12,6 +11,9 @@ const useStyles = makeStyles({
   },
   title: {
     fontSize: 14,
+  },
+  button: {
+    "margin-right": 10,
   },
 });
 
@@ -38,11 +40,21 @@ export const Session = (props) => {
         <Typography variant="body2" component="p">
           {props.contractAddress}
         </Typography>
-        <Button variant="contained" color="primary" onClick={onTimeout}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={onTimeout}
+          className={classes.button}
+        >
           Timeout
         </Button>
         {props.isPlayer1 === true ? (
-          <Button variant="contained" color="primary" onClick={onSolve}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onSolve}
+            className={classes.button}
+          >
             Solve
           </Button>
         ) : (

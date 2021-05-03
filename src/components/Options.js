@@ -1,10 +1,9 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import React from "react";
 
 const useStyles = makeStyles({
   root: {
@@ -12,6 +11,9 @@ const useStyles = makeStyles({
   },
   title: {
     fontSize: 14,
+  },
+  button: {
+    "margin-right": 10,
   },
 });
 
@@ -38,13 +40,28 @@ export const Options = (props) => {
         >
           ROCK - PAPER - SCISSORS - SPOCK - LIZARD
         </Typography>
-        <Button variant="contained" color="primary" onClick={onNew}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={onNew}
+          className={classes.button}
+        >
           New Game
         </Button>
-        <Button variant="contained" color="primary" onClick={onJoin}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={onJoin}
+          className={classes.button}
+        >
           Join Game
         </Button>
-        <Button variant="contained" color="primary" onClick={onRejoin}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={onRejoin}
+          className={classes.button}
+        >
           Rejoin Game
         </Button>
       </CardContent>
