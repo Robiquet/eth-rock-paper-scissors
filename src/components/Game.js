@@ -67,11 +67,12 @@ export const Game = (props) => {
     );
 
     await contract.deployed();
-    setContractAddress(contract.address);
 
     localStorage.setItem("player1WeaponHash", formValue.weaponHash);
     localStorage.setItem("player1Weapon", formValue.weapon);
-    localStorage.setItem("contractAddress", contractAddress);
+    localStorage.setItem("contractAddress", contract.address);
+    
+    setContractAddress(contract.address);
     setSessionStarted(true);
     props.loaderChange(false)
   };
