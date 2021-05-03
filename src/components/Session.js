@@ -35,6 +35,9 @@ export const Session = (props) => {
         >
           ROCK - PAPER - SCISSORS - SPOCK - LIZARD
         </Typography>
+        <Typography variant="body2" component="p">
+          {props.contractAddress}
+        </Typography>
         <Button variant="contained" color="primary" onClick={onTimeout}>
           Timeout
         </Button>

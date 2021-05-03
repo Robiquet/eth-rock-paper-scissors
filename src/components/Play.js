@@ -129,6 +129,7 @@ export const Play = (props) => {
               label="Contract Address"
               variant="filled"
               className={classes.input}
+              value={props.contractAddress}
             />
           ) : (
             <>
