@@ -65,6 +65,7 @@ export const Play = (props) => {
 
   const submitted = (event) => {
     event.preventDefault();
+    if(validateForm(event) === false) return
     let formValue;
     if (props.rejoin === true) {
       formValue = {
@@ -81,6 +82,30 @@ export const Play = (props) => {
       };
     }
     props.formSubmitted(formValue);
+  };
+
+  const validateForm = (event) => {
+    if (props.rejoin === true) {
+      return (
+        event.target[0].value !== undefined && event.target[0].value !== ""
+      );
+    } else if (props.newSession === false) {
+      return (
+        event.target[0].value !== undefined &&
+        event.target[0].value !== "" &&
+        event.target[1].value !== undefined &&
+        event.target[1].value !== ""
+      );
+    } else if (props.newSession === true) {
+      return (
+        event.target[0].value !== undefined &&
+        event.target[0].value !== "" &&
+        event.target[1].value !== undefined &&
+        event.target[1].value !== "" && event.target[2].value !== undefined && event.target[2].value !== ''
+      );
+    } else {
+      return false;
+    }
   };
 
   return (
