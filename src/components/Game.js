@@ -156,6 +156,7 @@ export const Game = () => {
 
     await tx.wait();
     console.log(tx);
+    restartGame()
   };
 
   const solve = async () => {
@@ -183,7 +184,14 @@ export const Game = () => {
     console.log(tx);
     await tx.wait();
     console.log(tx);
+    restartGame()
   };
+
+  const restartGame = () => {
+    setSessionStarted(false)
+    setNewSession(undefined)
+    setRejoin(undefined)
+  }
 
   const onNewClicked = () => {
     setNewSession(true);
