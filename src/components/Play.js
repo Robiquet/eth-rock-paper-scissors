@@ -33,32 +33,32 @@ export const Play = (props) => {
   const weapons = [
     {
       hash:
-        "0x389f631d616e7c12fb40c6e413bc3a393153a8638922d7698f30e8cdd3e85a7f",
-      value: 0,
-      text: "Rock",
-    },
-    {
-      hash:
         "0xb1e87fb1565405af97dd4c11307e39fe0e30715988296cf97d5034437f4c4a4c",
       value: 1,
-      text: "Paper",
+      text: "Rock",
     },
     {
       hash:
         "0xc2e1550c96845c5102419882750ec416af5c1db876759b9f59961d733122a5c3",
       value: 2,
-      text: "Scissors",
+      text: "Paper",
     },
     {
       hash:
         "0x4941ee0402af2d2db0d805cde613f4d6d689b9fecfaf52d37f439011a5542eed",
       value: 3,
-      text: "Spock",
+      text: "Scissors",
     },
     {
       hash:
         "0x8d879329d9314a21b26537aa4494cf1bfa0005a92e2c0ba72500cce3258e5139",
       value: 4,
+      text: "Spock",
+    },
+    {
+      hash:
+        "0xc16894a95b36f88e9a379bc2865d59378f23db5abe7736602e8197c38b7980a5",
+      value: 5,
       text: "Lizard",
     },
   ];

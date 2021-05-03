@@ -165,7 +165,6 @@ export const Game = () => {
     console.log(address, weapon, salt);
 
     console.log("solve");
-    const unlocked = await window.ethereum._metamask.isUnlocked();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     let abi =
