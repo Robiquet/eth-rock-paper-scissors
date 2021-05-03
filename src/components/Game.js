@@ -10,6 +10,7 @@ export const Game = () => {
   const [newSession, setNewSession] = useState(undefined);
   const [rejoin, setRejoin] = useState(undefined);
   const [sessionStarted, setSessionStarted] = useState(false);
+  const [isPlayer1, setIsPlayer1] = useState(undefined);
 
   const abi =
     '[{"constant":true,"inputs":[{"name":"_c1","type":"uint8"},{"name":"_c2","type":"uint8"}],"name":"win","outputs":[{"name":"w","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"j2Timeout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"stake","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"c2","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"c1Hash","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_c2","type":"uint8"}],"name":"play","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"j2","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastAction","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_c1","type":"uint8"},{"name":"_salt","type":"uint256"}],"name":"solve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"j1","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"j1Timeout","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"TIMEOUT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_c1Hash","type":"bytes32"},{"name":"_j2","type":"address"}],"payable":true,"stateMutability":"payable","type":"constructor"}]';
@@ -71,6 +72,7 @@ export const Game = () => {
   };
 
   const connectToContractSession = async (formValue) => {
+    setIsPlayer1(true)
     await window.ethereum.request({ method: "eth_requestAccounts" });
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -93,8 +95,25 @@ export const Game = () => {
     }
   };
 
-  const rejoinSession = (formValue) => {
+  const rejoinSession = async (formValue) => {
+    setIsPlayer1(false)
     contractAddress = formValue.address;
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(formValue.address, abi, provider);
+
+    const j1 = await contract.j1();
+    const j2 = await contract.j2();
+    const walletAddress = await signer.getAddress();
+
+    if (j1 === walletAddress) {
+      setIsPlayer1(true)
+    } else if (j2 === walletAddress) {
+      setIsPlayer1(false)
+    }
+
     setSessionStarted(true);
   };
 
@@ -109,7 +128,7 @@ export const Game = () => {
     const walletAddress = await signer.getAddress();
     let tx;
     if (j1 === walletAddress) {
-      tx = await contract.j1Timeout({ gasLimit: 200000 });
+      tx = await contract.j2Timeout({ gasLimit: 200000 });
     } else if (j2 === walletAddress) {
       tx = await contract.j1Timeout({ gasLimit: 200000 });
     } else {
@@ -165,6 +184,7 @@ export const Game = () => {
     <Session
       onSolveClicked={onSolveClicked}
       onTimeoutClicked={onTimeoutClicked}
+      isPlayer1={isPlayer1}
     ></Session>
   ) : (connected && newSession !== undefined) || rejoin !== undefined ? (
     <Play

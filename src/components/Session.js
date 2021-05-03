@@ -25,7 +25,6 @@ export const Session = (props) => {
     props.onSolveClicked();
   };
 
-
   return (
     <Card className={classes.root}>
       <CardContent>
@@ -39,9 +38,13 @@ export const Session = (props) => {
         <Button variant="contained" color="primary" onClick={onTimeout}>
           Timeout
         </Button>
-        <Button variant="contained" color="primary" onClick={onSolve}>
-          Solve
-        </Button>
+        {props.isPlayer1 === true ? (
+          <Button variant="contained" color="primary" onClick={onSolve}>
+            Solve
+          </Button>
+        ) : (
+          <></>
+        )}
       </CardContent>
     </Card>
   );
