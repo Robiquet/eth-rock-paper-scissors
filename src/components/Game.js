@@ -149,7 +149,6 @@ export const Game = (props) => {
     }
 
     await tx.wait();
-    console.log(tx);
     restartGame();
     props.loaderChange(false)
   };
