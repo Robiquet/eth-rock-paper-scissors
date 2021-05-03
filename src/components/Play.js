@@ -65,7 +65,6 @@ export const Play = (props) => {
 
   const submitted = (event) => {
     event.preventDefault();
-    //TODO: handle forms for other scenerios too
     let formValue;
     if (props.rejoin === true) {
       formValue = {
@@ -74,9 +73,11 @@ export const Play = (props) => {
     } else {
       formValue = {
         weapon: event.target[0].value,
-        weaponHash: weapons.find((w) => w.value.toString() === event.target[0].value).hash,
+        weaponHash: weapons.find(
+          (w) => w.value.toString() === event.target[0].value
+        ).hash,
         address: event.target[1].value,
-        stake: event.target[2].value,
+        stake: event.target[2]?.value,
       };
     }
     props.formSubmitted(formValue);
@@ -125,12 +126,16 @@ export const Play = (props) => {
                 variant="filled"
                 className={classes.input}
               />
-              <TextField
-                label="Ammount to stake (Ether)"
-                variant="filled"
-                type="number"
-                className={classes.input}
-              />
+              {props.newSession ? (
+                <TextField
+                  label="Ammount to stake (Ether)"
+                  variant="filled"
+                  type="number"
+                  className={classes.input}
+                />
+              ) : (
+                <></>
+              )}
             </>
           )}
 

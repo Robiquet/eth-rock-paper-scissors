@@ -95,14 +95,14 @@ export const Game = () => {
     const c2 = await contract.c2();
     const c1Hash = await contract.c1Hash();
     const j2 = await contract.j2();
+    const stake = await contract.stake();
     console.log(c2);
     console.log(j2);
     console.log(c1Hash);
-    const wei = utils.parseEther(formValue.stake);
 
     try {
       let tx = await contract.play(formValue.weapon, {
-        value: wei,
+        value: stake,
         gasLimit: 200000,
       });
       await tx.wait();
