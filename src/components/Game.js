@@ -33,8 +33,8 @@ export const Game = (props) => {
         setConnected(false);
       }
     }
-    
-    setContractAddress(localStorage.getItem("contractAddress"))
+
+    setContractAddress(localStorage.getItem("contractAddress"));
     checkConnection();
   }, []);
 
@@ -49,45 +49,49 @@ export const Game = (props) => {
   };
 
   const deployContract = async (formValue) => {
-    props.loaderChange(true)
-    setIsPlayer1(true)
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-    const signer = provider.getSigner();
-    const factory = new ContractFactory(abi, bytecode, signer);
-
-    const ethNumber = formValue.stake;
-    const wei = utils.parseEther(ethNumber);
-
-    const contract = await factory.deploy(
-      formValue.weaponHash,
-      formValue.address,
-      { value: wei }
-    );
-
-    await contract.deployed();
-
-    localStorage.setItem("player1WeaponHash", formValue.weaponHash);
-    localStorage.setItem("player1Weapon", formValue.weapon);
-    localStorage.setItem("contractAddress", contract.address);
+    props.loaderChange(true);
+    setIsPlayer1(true);
     
-    setContractAddress(contract.address);
-    setSessionStarted(true);
-    props.loaderChange(false)
+    try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+      const signer = provider.getSigner();
+      const factory = new ContractFactory(abi, bytecode, signer);
+
+      const ethNumber = formValue.stake;
+      const wei = utils.parseEther(ethNumber);
+
+      const contract = await factory.deploy(
+        formValue.weaponHash,
+        formValue.address,
+        { value: wei }
+      );
+
+      await contract.deployed();
+      localStorage.setItem("player1WeaponHash", formValue.weaponHash);
+      localStorage.setItem("player1Weapon", formValue.weapon);
+      localStorage.setItem("contractAddress", contract.address);
+
+      setContractAddress(contract.address);
+      setSessionStarted(true);
+    } catch (e) {
+      console.error(e);
+    }
+    props.loaderChange(false);
   };
 
   const connectToContractSession = async (formValue) => {
-    props.loaderChange(true)
-    setIsPlayer1(false)
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-
-    const contract = new ethers.Contract(formValue.address, abi, signer);
+    props.loaderChange(true);
+    setIsPlayer1(false);
 
     try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      const contract = new ethers.Contract(formValue.address, abi, signer);
       const stake = await contract.stake();
 
       let tx = await contract.play(formValue.weapon, {
@@ -96,18 +100,17 @@ export const Game = (props) => {
       });
       await tx.wait();
 
-      setContractAddress(formValue.address)
+      setContractAddress(formValue.address);
       localStorage.setItem("contractAddress", formValue.address);
       setSessionStarted(true);
-      props.loaderChange(false)
     } catch (e) {
-      console.log(e);
-      props.loaderChange(false)
+      console.error(e);
     }
+    props.loaderChange(false);
   };
 
   const rejoinSession = async (formValue) => {
-    props.loaderChange(true)
+    props.loaderChange(true);
 
     setContractAddress(formValue.address);
 
@@ -116,58 +119,74 @@ export const Game = (props) => {
     const signer = provider.getSigner();
     const contract = new ethers.Contract(formValue.address, abi, provider);
 
-    const j1 = await contract.j1();
-    const j2 = await contract.j2();
-    const walletAddress = await signer.getAddress();
+    try {
+      const j1 = await contract.j1();
+      const j2 = await contract.j2();
+      const walletAddress = await signer.getAddress();
 
-    if (j1 === walletAddress) {
-      setIsPlayer1(true)
-    } else if (j2 === walletAddress) {
-      setIsPlayer1(false)
+      if (j1 === walletAddress) {
+        setIsPlayer1(true);
+      } else if (j2 === walletAddress) {
+        setIsPlayer1(false);
+      }
+      setSessionStarted(true);
+    } catch (e) {
+      console.error(e);
     }
-    props.loaderChange(false)
-    setSessionStarted(true);
+    props.loaderChange(false);
   };
 
   const timeoutPlayer = async () => {
-    props.loaderChange(true)
+    props.loaderChange(true);
 
-    const address = contractAddress ?? localStorage.getItem("contractAddress");
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(address, abi, signer);
+    try {
+      const address =
+        contractAddress ?? localStorage.getItem("contractAddress");
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(address, abi, signer);
 
-    const j1 = await contract.j1();
-    const j2 = await contract.j2();
-    const walletAddress = await signer.getAddress();
-    let tx;
-    if (j1 === walletAddress) {
-      tx = await contract.j2Timeout({ gasLimit: 200000 });
-    } else if (j2 === walletAddress) {
-      tx = await contract.j1Timeout({ gasLimit: 200000 });
-    } else {
-      return;
+      const j1 = await contract.j1();
+      const j2 = await contract.j2();
+      const walletAddress = await signer.getAddress();
+      let tx;
+      if (j1 === walletAddress) {
+        tx = await contract.j2Timeout({ gasLimit: 200000 });
+      } else if (j2 === walletAddress) {
+        tx = await contract.j1Timeout({ gasLimit: 200000 });
+      } else {
+        return;
+      }
+
+      await tx.wait();
+      restartGame();
+    } catch (e) {
+      console.error(e);
     }
 
-    await tx.wait();
-    restartGame();
-    props.loaderChange(false)
+    props.loaderChange(false);
   };
 
   const solve = async () => {
-    props.loaderChange(true)
-    const address = contractAddress ?? localStorage.getItem("contractAddress");
-    const weapon = localStorage.getItem("player1Weapon");
-    const salt = 65465412;
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    props.loaderChange(true);
+    try {
+      const address =
+        contractAddress ?? localStorage.getItem("contractAddress");
+      const weapon = localStorage.getItem("player1Weapon");
+      const salt = 65465412;
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(address, abi, signer);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(address, abi, signer);
 
-    const tx = await contract.solve(weapon, salt, { gasLimit: 200000 });
-    await tx.wait();
-    props.loaderChange(false)
-    restartGame();
+      const tx = await contract.solve(weapon, salt, { gasLimit: 200000 });
+      await tx.wait();
+      restartGame();
+    } catch (e) {
+      console.error(e);
+    }
+
+    props.loaderChange(false);
   };
 
   const restartGame = () => {

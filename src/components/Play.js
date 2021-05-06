@@ -28,7 +28,6 @@ const useStyles = makeStyles({
 
 export const Play = (props) => {
   const classes = useStyles();
-  //     enum Move {Null, Rock, Paper, Scissors, Spock, Lizard} // Possible moves. Note that if the parity of the moves is the same the lower one wins, otherwise the higher one.
   const salt = 65465412;
   const weapons = [
     {
